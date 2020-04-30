@@ -1,5 +1,7 @@
 package com.cleanup.todoc.ui;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,12 +20,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.cleanup.todoc.R;
+import com.cleanup.todoc.database.dao.SaveMyTaskDatabase;
+import com.cleanup.todoc.database.dao.TaskDao;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>Home activity of the application which is displayed when the user opens the app.</p>
@@ -42,6 +47,11 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      */
     @NonNull
     private final ArrayList<Task> tasks = new ArrayList<>();
+    // TODO Récupérer ici les taches à afficher
+
+/*    SaveMyTaskDatabase saveMyTaskDatabase;
+    saveMyTaskDatabase.*/
+
 
     /**
      * The adapter which handles the list of tasks
@@ -163,8 +173,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             // If both project and name of the task have been set
             else if (taskProject != null) {
                 // TODO: Replace this by id of persisted task
-                long id = (long) (Math.random() * 50000);
-
+                // long id = (long) (Math.random() * 50000);
+                long id = 0;
 
                 Task task = new Task(
                         id,
@@ -182,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 dialogInterface.dismiss();
             }
         }
-        // If dialog is aloready closed
+        // If dialog is already closed
         else {
             dialogInterface.dismiss();
         }
