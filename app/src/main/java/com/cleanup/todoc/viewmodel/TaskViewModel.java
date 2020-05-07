@@ -1,8 +1,8 @@
-package com.cleanup.todoc.ui;
+package com.cleanup.todoc.viewmodel;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.annotation.Nullable;
 
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
@@ -14,7 +14,6 @@ import java.util.concurrent.Executor;
 
 public class TaskViewModel extends ViewModel {
 
-
     // REPOSITORIES
     private final ProjectDataRepository projectDataSource;
     private final TaskDataRepository taskDataSource;
@@ -22,7 +21,8 @@ public class TaskViewModel extends ViewModel {
 
     // DATA
     @Nullable
-    private LiveData<Project> currentProject;
+    private LiveData<List<Project>> projects;
+    private LiveData<List<Task>> tasks;
 
     public TaskViewModel(ProjectDataRepository projectDataSource, TaskDataRepository taskDataSource, Executor executor) {
         this.projectDataSource = projectDataSource;
@@ -30,43 +30,41 @@ public class TaskViewModel extends ViewModel {
         this.executor = executor;
     }
 
-    public void init(long projectId) {
-        if (this.currentProject != null) {
-            return;
-        }
-        currentProject = projectDataSource.getProject(projectId);
+    public void init() {
+        projects = projectDataSource.getAllProjects();
+        tasks = taskDataSource.getTasks();
     }
 
     // -------------
     // FOR PROJECT
     // -------------
 
-    public LiveData<Project> getProject(long projectId) { return this.currentProject;  }
+    public LiveData<List<Project>> getProjects() { return projects;  }
+
+
+    public void insertProject(Project project) {
+        executor.execute(() -> projectDataSource.addProject(project));
+    }
+
 
     // -------------
     // FOR TASKS
     // -------------
 
-    public LiveData<List<Task>> getTasks(long projectId) {
-        return taskDataSource.getTasks(projectId);
+    public LiveData<List<Task>> getTasks() {
+        return taskDataSource.getTasks();
     }
 
-    public void createTask(Task task) {
-        executor.execute(() -> {
-            taskDataSource.createTask(task);
-        });
+    public void addTask(Task task) {
+        executor.execute(() -> taskDataSource.addTask(task));
     }
 
     public void deleteTask(long id) {
-        executor.execute(() -> {
-            taskDataSource.deleteTask(id);
-        });
+        executor.execute(() -> taskDataSource.deleteTask(id));
     }
 
     public void updateTask(Task task) {
-        executor.execute(() -> {
-            taskDataSource.updateTask(task);
-        });
+        executor.execute(() -> taskDataSource.updateTask(task));
     }
 
 }

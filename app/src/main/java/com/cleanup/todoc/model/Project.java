@@ -1,29 +1,25 @@
 package com.cleanup.todoc.model;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 /**
  * <p>Models for project in which tasks are included.</p>
  *
  * @author Gaëtan HERFRAY
  */
-// We declare project as a table with PK = id / @ Etienne DESCAMPS
 @Entity(tableName = "Project")
+
 public class Project {
-
-    // DID : Got rid of the final access modifiers so that room can work with the Project model
-
     /**
      * The unique identifier of the project
      */
     @PrimaryKey
     private long id;
-
 
     /**
      * The name of the project
@@ -37,8 +33,9 @@ public class Project {
     @ColorInt
     private int color;
 
-
-    public Project() {
+    public Project(@NonNull String name, int color) {
+        this.name = name;
+        this.color = color;
     }
 
     /**
@@ -125,10 +122,10 @@ public class Project {
         this.color = color;
     }
 
-
     @Override
     @NonNull
     public String toString() {
         return getName();
     }
+
 }
