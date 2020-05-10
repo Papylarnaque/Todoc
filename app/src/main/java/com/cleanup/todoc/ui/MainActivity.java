@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModelProvider;
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      */
      @NonNull
      private final ArrayList<Task> tasks = new ArrayList<>();
-    //private final MediatorLiveData<List<Task>> tasks = new MediatorLiveData<List<Task>>();
 
     /**
      * The adapter which handles the list of tasks
@@ -132,21 +132,36 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         this.taskViewModel.getTasks().observe(this, this::updateTasks);
     }
 
-    private void updateTask(Task task) {
-        this.taskViewModel.updateTask(task);
+    // Sorting Querries
+    private void getTasksAZ() {
+        this.taskViewModel.getTasksAZ().observe(this, this::updateTasks);
     }
+    private void getTasksZA() {
+        this.taskViewModel.getTasksZA().observe(this, this::updateTasks);
+    }
+    private void getTasksNewOld() {
+        this.taskViewModel.getTasksNewOld().observe(this, this::updateTasks);
+    }
+    private void getTasksOldNew() {
+        this.taskViewModel.getTasksOldNew().observe(this, this::updateTasks);
+    }
+
+/*    private void updateTask(Task task) {
+        this.taskViewModel.updateTask(task);
+    }*/
 
     /**
      * Updates the list of tasks in the UI
      */
     private void updateTasks(List<Task> tasks) {
           if (tasks.size() == 0) {
+              // sets the "No tasks" view in back of the empty list
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
         } else {
-            lblNoTasks.setVisibility(View.GONE);
+            lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.VISIBLE);
-            switch (sortMethod) {
+/*            switch (sortMethod) {
                 case ALPHABETICAL:
                     Collections.sort(tasks, new Task.TaskAZComparator());
                     break;
@@ -159,8 +174,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                 case OLD_FIRST:
                     Collections.sort(tasks, new Task.TaskOldComparator());
                     break;
-
-            }
+            }*/
             adapter.updateTasks(tasks);
         }
     }
@@ -195,16 +209,20 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         int id = item.getItemId();
 
         if (id == R.id.filter_alphabetical) {
-            sortMethod = SortMethod.ALPHABETICAL;
+            //sortMethod = SortMethod.ALPHABETICAL;
+            getTasksAZ();
         } else if (id == R.id.filter_alphabetical_inverted) {
-            sortMethod = SortMethod.ALPHABETICAL_INVERTED;
+            //sortMethod = SortMethod.ALPHABETICAL_INVERTED;
+            getTasksZA();
         } else if (id == R.id.filter_oldest_first) {
-            sortMethod = SortMethod.OLD_FIRST;
+            //sortMethod = SortMethod.OLD_FIRST;
+            getTasksOldNew();
         } else if (id == R.id.filter_recent_first) {
-            sortMethod = SortMethod.RECENT_FIRST;
+            //sortMethod = SortMethod.RECENT_FIRST;
+            getTasksNewOld();
         }
 
-        updateTasks();
+        //updateTasks();
 
         return super.onOptionsItemSelected(item);
     }
@@ -366,4 +384,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
          */
         NONE
     }
+
+
+
+
+
 }
