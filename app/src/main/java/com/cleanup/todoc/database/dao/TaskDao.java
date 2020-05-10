@@ -31,10 +31,10 @@ public interface TaskDao {
     @Query("SELECT * FROM Task ORDER BY name DESC")
     LiveData<List<Task>> getTasksAlphabeticalZA();
 
-    @Query("SELECT * FROM Task ORDER BY creationTimestamp ASC")
+    @Query("SELECT * FROM Task ORDER BY creationTimestamp DESC")
     LiveData<List<Task>> getTasksAlphabeticalNewToOld();
 
-    @Query("SELECT * FROM Task ORDER BY creationTimestamp DESC")
+    @Query("SELECT * FROM Task ORDER BY creationTimestamp ASC")
     LiveData<List<Task>> getTasksAlphabeticalOldToNew();
 
 

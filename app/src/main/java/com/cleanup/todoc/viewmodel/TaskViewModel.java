@@ -31,16 +31,11 @@ public class TaskViewModel extends ViewModel {
         this.executor = executor;
     }
 
-/*    public void init() {
-        projects = projectDataSource.getAllProjects();
-        tasks = taskDataSource.getTasks();
-    }*/
-
     // -------------
     // FOR PROJECT
     // -------------
 
-    public LiveData<List<Project>> getProjects() { return projects;  }
+    public LiveData<List<Project>> getProjects() { return projectDataSource.getAllProjects();  }
 
 
     public void insertProject(Project project) {
