@@ -44,8 +44,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * List of all projects available in the application
      */
-    // private final Project[] allProjects = Project.getAllProjects();
-    private Project[] allProjects = new Project[0];
+//    private Project[] allProjects = new Project[0];
     private List<Project> projects;
 
     /**
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * The adapter which handles the list of tasks
      */
-    private final TasksAdapter adapter = new TasksAdapter(tasks, this);
+    private final TasksAdapter adapter = new TasksAdapter(tasks, projects, this);
 
     /**
      * Dialog to create a new task
@@ -157,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             lblNoTasks.setVisibility(View.GONE);
             listTasks.setVisibility(View.VISIBLE);
 
-            adapter.updateTasks(tasks);
+            adapter.updateTasks(tasks, projects);
         }
     }
 
@@ -177,13 +176,14 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     ///////////// PROJECT /////////////
 
-    // Get all projects TODO
+    // Get all projects
     private void getProjects() {
         this.taskViewModel.getProjects().observe(this, new Observer<List<Project>>() {
             @Override
             public void onChanged(List<Project> projectList) {
                 projects = projectList;
-                allProjects = projects.toArray(new Project[0]);
+                // TODO Passer la liste en Array ici ou c'est mieux directement dans le Spinner ?
+//                allProjects = projects.toArray(new Project[0]);
             }
         });
     }
@@ -309,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * Sets the data of the Spinner with projects to associate to a new task
      */
     private void populateDialogSpinner() {
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allProjects);
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, projects.toArray(new Project[0]));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dialogSpinner != null) {
             dialogSpinner.setAdapter(adapter);

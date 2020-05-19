@@ -1,7 +1,6 @@
 package com.cleanup.todoc.model;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -98,15 +97,15 @@ public class Task {
         this.projectId = projectId;
     }
 
-    /**
-     * Returns the project associated to the task.
-     *
-     * @return the project associated to the task
-     */
-    @Nullable
-    public Project getProject() {
-        return Project.getProjectById(projectId);
-    }
+//    /**
+//     * Returns the project associated to the task.
+//     *
+//     * @return the project associated to the task
+//     */
+//    @Nullable
+//    public Project getProject() {
+//        return Project.getProjectById(projectId);
+//    }
 
     /**
      * Returns the name of the task.

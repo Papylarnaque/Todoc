@@ -28,6 +28,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
     @NonNull
     private List<Task> tasks;
 
+    private List<Project> projects;
+
     /**
      * The listener for when a task needs to be deleted
      */
@@ -39,8 +41,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
      *
      * @param tasks the list of tasks the adapter deals with to set
      */
-    TasksAdapter(@NonNull final List<Task> tasks, @NonNull final DeleteTaskListener deleteTaskListener) {
+    TasksAdapter(@NonNull final List<Task> tasks, List<Project> projects, @NonNull final DeleteTaskListener deleteTaskListener) {
         this.tasks = tasks;
+        this.projects = projects;
         this.deleteTaskListener = deleteTaskListener;
     }
 
@@ -49,8 +52,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
      *
      * @param tasks the list of tasks the adapter deals with to set
      */
-    void updateTasks(@NonNull final List<Task> tasks) {
+    void updateTasks(@NonNull final List<Task> tasks, @NonNull final List<Project> projects) {
         this.tasks = tasks;
+        this.projects = projects;
         notifyDataSetChanged();
     }
 
@@ -147,10 +151,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
             lblTaskName.setText(task.getName());
             imgDelete.setTag(task);
 
-
-            // TODO Get the project from the database, not from the static data in Project model !
-            final Project taskProject = task.getProject();
-//            final Project taskProject = getProject(task.getProjectId());
+            final Project taskProject = getProject(task.getProjectId());
             if (taskProject != null) {
                 imgProject.setSupportImageTintList(ColorStateList.valueOf(taskProject.getColor()));
                 lblProjectName.setText(taskProject.getName());
@@ -158,22 +159,17 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
                 imgProject.setVisibility(View.INVISIBLE);
                 lblProjectName.setText("");
             }
-
         }
 
 
-//        private Project getProject(long projectId) {
-//            Project project = null;
-//            for (Project p : projects)
-//                if (p.getId() == projectId) {
-//                    project = p;
-//                }
-//            if (project == null) {
-//                project = new Project("Projet introuvable", 0x00000000);
-//            }
-//            return project;
-//        }
-
+        private Project getProject(long projectId) {
+            Project project = null;
+            for (Project p : projects)
+                if (p.getId() == projectId) {
+                    project = p;
+                }
+            return project;
+        }
 
     }
 
