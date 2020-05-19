@@ -10,7 +10,7 @@
 
     <EditText
         android:id="@+id/txt_task_name"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/dialog_width"
         android:layout_height="wrap_content"
         android:hint="@string/task_name_hint"
         android:importantForAutofill="no"

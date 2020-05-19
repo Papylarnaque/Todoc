@@ -1,13 +1,14 @@
 package com.cleanup.todoc.ui;
 
 import android.content.res.ColorStateList;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cleanup.todoc.R;
 import com.cleanup.todoc.model.Project;
@@ -116,7 +117,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
         /**
          * Instantiates a new TaskViewHolder.
          *
-         * @param itemView the view of the task item
+         * @param itemView           the view of the task item
          * @param deleteTaskListener the listener for when a task needs to be deleted to set
          */
         TaskViewHolder(@NonNull View itemView, @NonNull DeleteTaskListener deleteTaskListener) {
@@ -146,7 +147,10 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
             lblTaskName.setText(task.getName());
             imgDelete.setTag(task);
 
+
+            // TODO Get the project from the database, not from the static data in Project model !
             final Project taskProject = task.getProject();
+//            final Project taskProject = getProject(task.getProjectId());
             if (taskProject != null) {
                 imgProject.setSupportImageTintList(ColorStateList.valueOf(taskProject.getColor()));
                 lblProjectName.setText(taskProject.getName());
@@ -156,5 +160,21 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
             }
 
         }
+
+
+//        private Project getProject(long projectId) {
+//            Project project = null;
+//            for (Project p : projects)
+//                if (p.getId() == projectId) {
+//                    project = p;
+//                }
+//            if (project == null) {
+//                project = new Project("Projet introuvable", 0x00000000);
+//            }
+//            return project;
+//        }
+
+
     }
+
 }

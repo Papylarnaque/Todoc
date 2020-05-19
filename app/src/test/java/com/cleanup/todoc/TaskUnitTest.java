@@ -12,6 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
+// TODO Mise à jour des tests, afin d’intégrer SQLite à l’application.
+
 /**
  * Unit tests for tasks
  *
@@ -29,6 +31,7 @@ public class TaskUnitTest {
         assertEquals("Projet Lucidia", task2.getProject().getName());
         assertEquals("Projet Circus", task3.getProject().getName());
         assertNull(task4.getProject());
+        // TODO récupérer les projets depuis DB ?
     }
 
     @Test

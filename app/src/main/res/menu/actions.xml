@@ -5,11 +5,6 @@
     tools:context=".ui.MainActivity">
 
     <item
-        android:id="@+id/add_project"
-        android:icon="@drawable/ic_add"
-        android:title="@string/label_action_filter"
-        app:showAsAction="ifRoom"/>
-    <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_filter_list"
         android:title="@string/label_action_filter"

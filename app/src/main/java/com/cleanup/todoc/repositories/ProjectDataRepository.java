@@ -16,16 +16,14 @@ public class ProjectDataRepository {
         this.projectDao = projectDao;
     }
 
-    // --- GET PROJECT ---
+    // --- GET PROJECT LIST---
     public LiveData<List<Project>> getAllProjects() {
-        return projectDao.getAllProjects();
+        return this.projectDao.getAllProjects();
     }
+
+    // --- GET PROJECT ---
     public LiveData<Project> getProject(long projectId) {
         return this.projectDao.getProject(projectId);
     }
 
-    // --- CREATE ---
-    public void addProject(Project project) {
-        projectDao.insertProject(project);
-    }
 }

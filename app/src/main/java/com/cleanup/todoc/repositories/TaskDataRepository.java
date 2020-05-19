@@ -41,7 +41,6 @@ public class TaskDataRepository {
 
     public void addTask(Task task) {
         taskDao.insertTask(task);
-        //taskDao.insertTask(tasks[0]);
     }
 
     // --- DELETE ---
@@ -49,9 +48,5 @@ public class TaskDataRepository {
         taskDao.deleteTask(id);
     }
 
-    // --- UPDATE ---
-    public void updateTask(Task task) {
-        taskDao.updateTask(task);
-    }
 }
 

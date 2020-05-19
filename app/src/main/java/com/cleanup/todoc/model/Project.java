@@ -3,9 +3,11 @@ package com.cleanup.todoc.model;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import java.util.List;
 
 /**
  * <p>Models for project in which tasks are included.</p>
@@ -45,7 +47,8 @@ public class Project {
      * @param name  the name of the project to set
      * @param color the hex (ARGB) code of the color associated to the project to set
      */
-    private Project(long id, @NonNull String name, @ColorInt int color) {
+    @Ignore
+    Project(long id, @NonNull String name, @ColorInt int color) {
         this.id = id;
         this.name = name;
         this.color = color;
@@ -64,6 +67,17 @@ public class Project {
                 new Project(3L, "Projet Circus", 0xFFA3CED2),
         };
     }
+
+    /**
+     * Returns all the projects of the application.
+     *
+     * @return all the projects of the application
+     */
+    @NonNull
+    public Project[] setProjectList(List<Project> projectList) {
+        return projectList.toArray(new Project[0]);
+    }
+
 
     /**
      * Returns the project with the given unique identifier, or null if no project with that

@@ -23,7 +23,6 @@ public abstract class TodocDatabase extends RoomDatabase {
 
     // --- DAO ---
     public abstract ProjectDao projectDao();
-
     public abstract TaskDao taskDao();
 
     // --- INSTANCE ---
@@ -50,8 +49,8 @@ public abstract class TodocDatabase extends RoomDatabase {
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
 
-                //
                 ContentValues projectContentValues = new ContentValues();
+
                 projectContentValues.put("id", 1L);
                 projectContentValues.put("name", "Projet Tartampion");
                 projectContentValues.put("color", 0xFFEADAD1);

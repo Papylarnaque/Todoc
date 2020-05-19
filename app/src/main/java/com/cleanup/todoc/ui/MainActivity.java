@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,7 +45,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * List of all projects available in the application
      */
     // private final Project[] allProjects = Project.getAllProjects();
-    private final Project[] allProjects = Project.getAllProjects();
+    private Project[] allProjects = new Project[0];
+    private List<Project> projects;
 
     /**
      * List of all current tasks of the application
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @NonNull
     private TextView lblNoTasks;
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         this.configureViewModel();
         this.getTasks();
+        this.getProjects();
     }
 
     ///////////// CONFIGURATION /////////////
@@ -152,58 +156,14 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         } else {
             lblNoTasks.setVisibility(View.GONE);
             listTasks.setVisibility(View.VISIBLE);
-/*            switch (sortMethod) {
-                case ALPHABETICAL:
-                    Collections.sort(tasks, new Task.TaskAZComparator());
-                    break;
-                case ALPHABETICAL_INVERTED:
-                    Collections.sort(tasks, new Task.TaskZAComparator());
-                    break;
-                case RECENT_FIRST:
-                    Collections.sort(tasks, new Task.TaskRecentComparator());
-                    break;
-                case OLD_FIRST:
-                    Collections.sort(tasks, new Task.TaskOldComparator());
-                    break;
-            }*/
-            adapter.updateTasks(tasks);
-        }
-    }
 
-    /**
-     * Updates the list of tasks in the UI
-     */
-    private void updateTasks() {
-        if (tasks.size() == 0) {
-            lblNoTasks.setVisibility(View.VISIBLE);
-            listTasks.setVisibility(View.GONE);
-        } else {
-            lblNoTasks.setVisibility(View.GONE);
-            listTasks.setVisibility(View.VISIBLE);
-/*            switch (sortMethod) {
-                case ALPHABETICAL:
-                    Collections.sort(tasks, new Task.TaskAZComparator());
-                    break;
-                case ALPHABETICAL_INVERTED:
-                    Collections.sort(tasks, new Task.TaskZAComparator());
-                    break;
-                case RECENT_FIRST:
-                    Collections.sort(tasks, new Task.TaskRecentComparator());
-                    break;
-                case OLD_FIRST:
-                    Collections.sort(tasks, new Task.TaskOldComparator());
-                    break;
-
-            }*/
             adapter.updateTasks(tasks);
         }
     }
 
     @Override
     public void onDeleteTask(Task task) {
-        //tasks.remove(task);
         this.taskViewModel.deleteTask(task.getId());
-        updateTasks();
     }
 
     /**
@@ -217,23 +177,20 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     ///////////// PROJECT /////////////
 
-    /**
-     * Adds the given project to the list of projects.
-     *
-     * @param project the project to be added to the Project table
-     */
-    private void addProject(@NonNull Project project) {
-        this.taskViewModel.insertProject(project);
+    // Get all projects TODO
+    private void getProjects() {
+        this.taskViewModel.getProjects().observe(this, new Observer<List<Project>>() {
+            @Override
+            public void onChanged(List<Project> projectList) {
+                projects = projectList;
+                allProjects = projects.toArray(new Project[0]);
+            }
+        });
     }
 
-/*    // Get all projects
-    private void getProjects() {
-        this.taskViewModel.getProjects().observe(this, this::updateTasks);
-    }*/
-
+    ;
 
     ///////////// MENU /////////////
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.actions, menu);
@@ -245,22 +202,14 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         int id = item.getItemId();
 
         if (id == R.id.filter_alphabetical) {
-            //sortMethod = SortMethod.ALPHABETICAL;
             getTasksAZ();
         } else if (id == R.id.filter_alphabetical_inverted) {
-            //sortMethod = SortMethod.ALPHABETICAL_INVERTED;
             getTasksZA();
         } else if (id == R.id.filter_oldest_first) {
-            //sortMethod = SortMethod.OLD_FIRST;
             getTasksOldNew();
         } else if (id == R.id.filter_recent_first) {
-            //sortMethod = SortMethod.RECENT_FIRST;
             getTasksNewOld();
-        } else if (id == R.id.add_project) {
-            showAddProjectDialog();
         }
-
-        //updateTasks();
 
         return super.onOptionsItemSelected(item);
     }
@@ -336,7 +285,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             else if (taskProject != null) {
 
                 Task task = new Task(
-                        //id,
                         taskProject.getId(),
                         taskName,
                         new Date().getTime()
@@ -361,122 +309,11 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * Sets the data of the Spinner with projects to associate to a new task
      */
     private void populateDialogSpinner() {
-        /*
-         *  TODO Ajouter les projets dans le spinner ( LiveData + getProjects().observe + update ArrayAdapter<Project> )
-         *   => Utilité du LiveData pour les projets à revoir (ajout du projet + pas de visu en direct)
-         *      Quelle solution alternative pour accéder aux données sans LiveData ?
-          */
-
-        //this.taskViewModel.getProjects().observe(this, this::updateProjectsSpinner(tasks););
         final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allProjects);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dialogSpinner != null) {
             dialogSpinner.setAdapter(adapter);
         }
     }
-
-    ///////////// PROJECT CREATION /////////////
-
-    /**
-     * Shows the Dialog for adding a Project
-     */
-    private void showAddProjectDialog() {
-        final AlertDialog dialog = getAddProjectDialog();
-
-        dialog.show();
-
-        dialogEditText = dialog.findViewById(R.id.txt_project_name);
-
-        populateDialogSpinner();
-    }
-
-    /**
-     * Returns the dialog allowing the user to create a new project.
-     *
-     * @return the dialog allowing the user to create a new project
-     */
-    @NonNull
-    private AlertDialog getAddProjectDialog() {
-        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this, R.style.Dialog);
-
-        alertBuilder.setTitle(R.string.add_project);
-        alertBuilder.setView(R.layout.dialog_add_project);
-        alertBuilder.setPositiveButton(R.string.add, null);
-        alertBuilder.setOnDismissListener(dialogInterface -> {
-            dialogEditText = null;
-            dialog = null;
-        });
-
-        dialog = alertBuilder.create();
-
-        // This instead of listener to positive button in order to avoid automatic dismiss
-        dialog.setOnShowListener(dialogInterface -> {
-
-            Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(view -> onAddProjectPositiveButtonClick(dialog));
-        });
-
-        return dialog;
-    }
-
-    /**
-     * Called when the user clicks on the positive button of the Create PROJECT Dialog.
-     *
-     * @param dialogInterface the current displayed dialog
-     */
-    private void onAddProjectPositiveButtonClick(DialogInterface dialogInterface) {
-        // If dialog is open
-        if (dialogEditText != null) {
-            // Get the name of the task
-            String projectName = dialogEditText.getText().toString();
-
-            // If a name has not been set
-            if (projectName.trim().isEmpty()) {
-                dialogEditText.setError(getString(R.string.empty_project_name));
-            }
-            // If both project and name of the task have been set
-            else if (!projectName.trim().isEmpty()) {
-
-                Project project = new Project(
-                        projectName,
-                        0xFFEADAD1
-                );
-
-                addProject(project);
-
-                dialogInterface.dismiss();
-            }
-            // If name has been set, but project has not been set (this should never occur)
-            else {
-                dialogInterface.dismiss();
-            }
-        }
-        // If dialog is already closed
-        else {
-            dialogInterface.dismiss();
-        }
-    }
-
-
-    /*
-     *//**
-     * The sort method to be used to display tasks
-     *//*
-    @NonNull
-    private SortMethod sortMethod = SortMethod.NONE;*/
-
-
-    /*
-     *//**
-     * List of all possible sort methods for task
-     *//*
-    private enum SortMethod {
-        ALPHABETICAL,
-        ALPHABETICAL_INVERTED,
-        RECENT_FIRST,
-        OLD_FIRST,
-        NONE
-    }*/
-
 
 }
