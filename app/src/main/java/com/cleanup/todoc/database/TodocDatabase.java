@@ -40,8 +40,6 @@ public abstract class TodocDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    // ---
-
     private static Callback prepopulateDatabase() {
         return new Callback() {
 
@@ -65,6 +63,7 @@ public abstract class TodocDatabase extends RoomDatabase {
                 projectContentValues.put("name", "Projet Circus");
                 projectContentValues.put("color", 0xFFA3CED2);
                 db.insert("Project", OnConflictStrategy.REPLACE, projectContentValues);
+
 
             }
         };

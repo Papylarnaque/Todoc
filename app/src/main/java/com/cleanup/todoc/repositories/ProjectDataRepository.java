@@ -18,12 +18,8 @@ public class ProjectDataRepository {
 
     // --- GET PROJECT LIST---
     public LiveData<List<Project>> getAllProjects() {
+//    public List<Project> getAllProjects() {
         return this.projectDao.getAllProjects();
-    }
-
-    // --- GET PROJECT ---
-    public LiveData<Project> getProject(long projectId) {
-        return this.projectDao.getProject(projectId);
     }
 
 }

@@ -30,7 +30,12 @@ public class TaskViewModel extends ViewModel {
 
     public LiveData<List<Project>> getProjects() { return projectDataSource.getAllProjects();  }
 
-//    public LiveData<Project> getProject(long projectId) { return projectDataSource.getProject(projectId);  }
+//    public List<Project> getProjects() {
+//        List<Project> projects = null;
+//        executor.execute(projectDataSource::getAllProjects
+//        projects = projectDataSource.getAllProjects());
+//        return projects;
+//    }
 
     // TODO Implementer ViewModel.onCleared() pour éviter un leak en cas de fin de vue par l'utilisateur
 
@@ -65,10 +70,5 @@ public class TaskViewModel extends ViewModel {
     public void deleteTask(long id) {
         executor.execute(() -> taskDataSource.deleteTask(id));
     }
-
-//    public void updateTask(Task task) {
-//        executor.execute(() -> taskDataSource.updateTask(task));
-//    }
-
 
 }

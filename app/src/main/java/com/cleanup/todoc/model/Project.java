@@ -2,6 +2,7 @@ package com.cleanup.todoc.model;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -19,7 +20,7 @@ public class Project {
     /**
      * The unique identifier of the project
      */
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey//(autoGenerate = true)
     private long id;
 
     /**
@@ -34,6 +35,8 @@ public class Project {
     @ColorInt
     private int color;
 
+    @Ignore
+    @VisibleForTesting
     public Project(@NonNull String name, int color) {
         this.name = name;
         this.color = color;
@@ -46,8 +49,7 @@ public class Project {
      * @param name  the name of the project to set
      * @param color the hex (ARGB) code of the color associated to the project to set
      */
-    @Ignore
-    Project(long id, @NonNull String name, @ColorInt int color) {
+    public Project(long id, @NonNull String name, @ColorInt int color) {
         this.id = id;
         this.name = name;
         this.color = color;

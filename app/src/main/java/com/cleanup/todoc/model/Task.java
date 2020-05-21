@@ -97,16 +97,6 @@ public class Task {
         this.projectId = projectId;
     }
 
-//    /**
-//     * Returns the project associated to the task.
-//     *
-//     * @return the project associated to the task
-//     */
-//    @Nullable
-//    public Project getProject() {
-//        return Project.getProjectById(projectId);
-//    }
-
     /**
      * Returns the name of the task.
      *

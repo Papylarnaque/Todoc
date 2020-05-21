@@ -53,9 +53,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
      * @param tasks the list of tasks the adapter deals with to set
      */
     void updateTasks(@NonNull final List<Task> tasks, @NonNull final List<Project> projects) {
+        // TODO Utiliser le mTaskViewModel pour récupérer ces données, pas ces listes
         this.tasks = tasks;
         this.projects = projects;
         notifyDataSetChanged();
+
     }
 
     @NonNull
@@ -164,10 +166,13 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
 
         private Project getProject(long projectId) {
             Project project = null;
-            for (Project p : projects)
-                if (p.getId() == projectId) {
-                    project = p;
-                }
+            // TODO Problème en cas de rotation à cause du projects == null ???
+            if (projects != null) {
+                for (Project p : projects)
+                    if (p.getId() == projectId) {
+                        project = p;
+                    }
+            }
             return project;
         }
 

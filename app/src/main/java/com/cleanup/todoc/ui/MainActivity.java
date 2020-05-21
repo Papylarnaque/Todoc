@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +29,7 @@ import com.cleanup.todoc.viewmodel.TaskViewModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * <p>Home activity of the application which is displayed when the user opens the app.</p>
@@ -40,11 +40,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
     private TaskViewModel taskViewModel;
+    private final AtomicBoolean mPending = new AtomicBoolean(true);
 
     /**
      * List of all projects available in the application
      */
-//    private Project[] allProjects = new Project[0];
     private List<Project> projects;
 
     /**
@@ -101,15 +101,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
         listTasks = findViewById(R.id.list_tasks);
         lblNoTasks = findViewById(R.id.lbl_no_task);
-
+        this.configureViewModel();
+        if (projects == null) this.getProjects();
+        this.getTasks();
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         listTasks.setAdapter(adapter);
 
         findViewById(R.id.fab_add_task).setOnClickListener(view -> showAddTaskDialog());
-
-        this.configureViewModel();
-        this.getTasks();
-        this.getProjects();
     }
 
     ///////////// CONFIGURATION /////////////
@@ -153,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
         } else {
+            this.getProjects();
             lblNoTasks.setVisibility(View.GONE);
             listTasks.setVisibility(View.VISIBLE);
 
@@ -178,17 +177,14 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
     // Get all projects
     private void getProjects() {
-        this.taskViewModel.getProjects().observe(this, new Observer<List<Project>>() {
-            @Override
-            public void onChanged(List<Project> projectList) {
+        this.taskViewModel.getProjects().observeForever(projectList -> {
+//            if (projectList == null) {//do nothing
+//            } else {
+//                if (mPending.compareAndSet(true, false)) {
                 projects = projectList;
-                // TODO Passer la liste en Array ici ou c'est mieux directement dans le Spinner ?
-//                allProjects = projects.toArray(new Project[0]);
-            }
+//            }
         });
     }
-
-    ;
 
     ///////////// MENU /////////////
     @Override
@@ -309,6 +305,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * Sets the data of the Spinner with projects to associate to a new task
      */
     private void populateDialogSpinner() {
+        // TODO Récupérer les projets directement ici a partir d'un observer
         final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, projects.toArray(new Project[0]));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dialogSpinner != null) {
@@ -317,3 +314,5 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
 }
+
+
