@@ -1,7 +1,9 @@
 package com.cleanup.todoc;
 
+import android.app.Instrumentation;
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 
 import androidx.annotation.NonNull;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -9,7 +11,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-import androidx.test.core.app.ApplicationProvider;
+import androidx.test.InstrumentationRegistry;
 
 import com.cleanup.todoc.database.TodocDatabase;
 import com.cleanup.todoc.model.Project;
@@ -20,10 +22,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.junit.runners.JUnit4;
 
 import java.util.List;
 
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 // TODO Mise à jour des tests, afin d’intégrer SQLite à l’application.
@@ -33,9 +37,7 @@ import static junit.framework.TestCase.assertTrue;
  *
  * @author Gaëtan HERFRAY
  */
-//@RunWith(JUnit4.class)
-@RunWith(RobolectricTestRunner.class)
-//@Config(sdk = {Build.VERSION_CODES.O_MR1}, manifest=Config.NONE)
+@RunWith(JUnit4.class)
 public class TaskUnitTest {
 
     // DATA SET FOR TEST
@@ -43,10 +45,22 @@ public class TaskUnitTest {
     private static Task TASK_DEMO_1 = new Task(4L, "Tache de test 1", 1888414154);
     private static Task TASK_DEMO_2 = new Task(1L, "Tache de test 2", 1884714154);  // oldest
     private static Task TASK_DEMO_3 = new Task(2L, "Tache de test 3", 1889014154);  // newest
-    @Rule
-    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+
     // FOR DATA
     private TodocDatabase database;
+//    private Context context = ApplicationProvider.getApplicationContext();
+
+    @Rule
+    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+
+
+    @Before
+    public void initDb() throws Exception {
+        database = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(), TodocDatabase.class)
+                .addCallback(prepopulateDatabase())
+                .build();
+    }
+
 
     // Populates the test database with the projects
     private static RoomDatabase.Callback prepopulateDatabase() {
@@ -82,20 +96,6 @@ public class TaskUnitTest {
         };
     }
 
-    @Before
-    public void initDb() throws Exception {
-        Context context = ApplicationProvider.getApplicationContext();
-        database = Room.inMemoryDatabaseBuilder(context, TodocDatabase.class)
-                .addCallback(prepopulateDatabase())
-                .build();
-
-
-//        this.database = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), //getTargetContext(),
-//                TodocDatabase.class)
-//                .addCallback(prepopulateDatabase())
-//                .allowMainThreadQueries()
-//                .build();
-    }
 
     @After
     public void closeDb() throws Exception {
@@ -105,19 +105,19 @@ public class TaskUnitTest {
 // TODO Instancier le viewModel et passer par une  Injection spécifique pour les test unitaires
 
 
-    @Test
-    public void getProject() throws InterruptedException {
-        // TEST
-        Project project = LiveDataTestUtil.getValue(this.database.projectDao().getAllProjects()).get(3);
-        assertTrue(project.getName().equals(PROJECT_DEMO.getName()));// && project.getId() == PROJECT_DEMO.getId() && project.getColor() == PROJECT_DEMO.getColor());
-    }
-
-    @Test
-    public void getTasksWhenNoTasksCreated() throws InterruptedException {
-        // TEST
-        List<Task> tasks = LiveDataTestUtil.getValue(this.database.taskDao().getTasks());
-        assertTrue(tasks.isEmpty());
-    }
+//    @Test
+//    public void getProject() throws InterruptedException {
+//        // TEST
+//        Project project = LiveDataTestUtil.getValue(this.database.projectDao().getAllProjects()).get(3);
+//        assertTrue(project.getName().equals(PROJECT_DEMO.getName()));// && project.getId() == PROJECT_DEMO.getId() && project.getColor() == PROJECT_DEMO.getColor());
+//    }
+//
+//    @Test
+//    public void getTasksWhenNoTasksCreated() throws InterruptedException {
+//        // TEST
+//        List<Task> tasks = LiveDataTestUtil.getValue(this.database.taskDao().getTasks());
+//        assertTrue(tasks.isEmpty());
+//    }
 
     @Test
     public void insertTasksAndGetTasks() throws InterruptedException {
@@ -130,6 +130,21 @@ public class TaskUnitTest {
         // TEST
         List<Task> tasks = LiveDataTestUtil.getValue(this.database.taskDao().getTasks());
         assertTrue(tasks.size() == 3);
+    }
+
+    public void testFollowLink() {
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_VIEW);
+        intentFilter.addDataScheme("http");
+        intentFilter.addCategory(Intent.CATEGORY_BROWSABLE);
+
+        Instrumentation inst = getInstrumentation();
+        Instrumentation.ActivityMonitor monitor = inst.addMonitor(intentFilter, null, false);
+//        TouchUtils.clickView(this, linkTextView);
+        monitor.waitForActivityWithTimeout(3000);
+        int monitorHits = monitor.getHits();
+        inst.removeMonitor(monitor);
+
+        assertEquals(1, monitorHits);
     }
 
 

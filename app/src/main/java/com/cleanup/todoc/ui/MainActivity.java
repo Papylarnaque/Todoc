@@ -29,7 +29,6 @@ import com.cleanup.todoc.viewmodel.TaskViewModel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * <p>Home activity of the application which is displayed when the user opens the app.</p>
@@ -39,24 +38,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
+    String TASKLIST_STATE_KEY = "TASKLIST_STATE_KEY"; // Save the taskList order choser by the user
     private TaskViewModel taskViewModel;
-    private final AtomicBoolean mPending = new AtomicBoolean(true);
+    String taskState;
 
     /**
      * List of all projects available in the application
      */
-    private List<Project> projects;
+    private List<Project> projectList;
 
     /**
      * List of all current tasks of the application
      */
     @NonNull
-    private final ArrayList<Task> tasks = new ArrayList<>();
+    private List<Task> taskList = new ArrayList<>();
 
     /**
      * The adapter which handles the list of tasks
      */
-    private final TasksAdapter adapter = new TasksAdapter(tasks, projects, this);
+    private final TasksAdapter adapter = new TasksAdapter(taskList, this);
 
     /**
      * Dialog to create a new task
@@ -97,17 +97,41 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // recovering the instance state
+        if (savedInstanceState != null) {
+            taskState = savedInstanceState.getString(TASKLIST_STATE_KEY);
+        }
+
         setContentView(R.layout.activity_main);
 
         listTasks = findViewById(R.id.list_tasks);
         lblNoTasks = findViewById(R.id.lbl_no_task);
         this.configureViewModel();
-        if (projects == null) this.getProjects();
-        this.getTasks();
+        if (projectList == null) this.getProjectList();
+        if (taskState == null) this.getTaskList();
+        else stateOfTaskListOrder();
+
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         listTasks.setAdapter(adapter);
 
         findViewById(R.id.fab_add_task).setOnClickListener(view -> showAddTaskDialog());
+    }
+
+    private void stateOfTaskListOrder() {
+        switch (taskState) {
+            case "TASKS_AZ":
+                getTasksAZ();
+                break;
+            case "TASKS_ZA":
+                getTasksZA();
+                break;
+            case "TASKS_NewOld":
+                getTasksNewOld();
+                break;
+            case "TASKS_OldNew":
+                getTasksOldNew();
+                break;
+        }
     }
 
     ///////////// CONFIGURATION /////////////
@@ -118,45 +142,53 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         this.taskViewModel = new ViewModelProvider(this, mViewModelFactory).get(TaskViewModel.class);
     }
 
+    private void updateAdapter() {
+        if (taskList.size() == 0) {
+            // sets the "No tasks" view in back of the empty list
+            lblNoTasks.setVisibility(View.VISIBLE);
+            listTasks.setVisibility(View.GONE);
+        } else {
+            lblNoTasks.setVisibility(View.GONE);
+            listTasks.setVisibility(View.VISIBLE);
+            adapter.updateTasks(taskList, projectList);
+        }
+    }
+
+
     ///////////// TASK /////////////
 
     // Get all tasks
-    private void getTasks() {
+    private void getTaskList() {
         this.taskViewModel.getTasks().observe(this, this::updateTasks);
     }
 
     // Sorting Querries
     private void getTasksAZ() {
         this.taskViewModel.getTasksAZ().observe(this, this::updateTasks);
+        taskState = "TASKS_AZ";
     }
 
     private void getTasksZA() {
         this.taskViewModel.getTasksZA().observe(this, this::updateTasks);
+        taskState = "TASKS_ZA";
     }
 
     private void getTasksNewOld() {
         this.taskViewModel.getTasksNewOld().observe(this, this::updateTasks);
+        taskState = "TASKS_NewOld";
     }
 
     private void getTasksOldNew() {
         this.taskViewModel.getTasksOldNew().observe(this, this::updateTasks);
+        taskState = "TASKS_OldNew";
     }
 
     /**
      * Updates the list of tasks in the UI
      */
     private void updateTasks(List<Task> tasks) {
-        if (tasks.size() == 0) {
-            // sets the "No tasks" view in back of the empty list
-            lblNoTasks.setVisibility(View.VISIBLE);
-            listTasks.setVisibility(View.GONE);
-        } else {
-            this.getProjects();
-            lblNoTasks.setVisibility(View.GONE);
-            listTasks.setVisibility(View.VISIBLE);
-
-            adapter.updateTasks(tasks, projects);
-        }
+        this.taskList = tasks;
+        updateAdapter();
     }
 
     @Override
@@ -176,14 +208,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     ///////////// PROJECT /////////////
 
     // Get all projects
-    private void getProjects() {
-        this.taskViewModel.getProjects().observeForever(projectList -> {
-//            if (projectList == null) {//do nothing
-//            } else {
-//                if (mPending.compareAndSet(true, false)) {
-                projects = projectList;
-//            }
-        });
+    private void getProjectList() {
+        this.taskViewModel.getProjects().observe(this, this::updateProjects);
+    }
+
+    private void updateProjects(List<Project> projectList) {
+        this.projectList = projectList;
+        updateAdapter();
     }
 
     ///////////// MENU /////////////
@@ -306,13 +337,20 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      */
     private void populateDialogSpinner() {
         // TODO Récupérer les projets directement ici a partir d'un observer
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, projects.toArray(new Project[0]));
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, projectList.toArray(new Project[0]));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dialogSpinner != null) {
             dialogSpinner.setAdapter(adapter);
         }
     }
 
+
+    // invoked when the activity may be temporarily destroyed, save the instance state here
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(TASKLIST_STATE_KEY, taskState);
+        super.onSaveInstanceState(outState);
+    }
+
+
 }
-
-
