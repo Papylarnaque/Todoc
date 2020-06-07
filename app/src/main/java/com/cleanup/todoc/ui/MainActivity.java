@@ -38,7 +38,11 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
-    String TASKLIST_STATE_KEY = "TASKLIST_STATE_KEY"; // Save the taskList order choser by the user
+    private final String PARAM1 = "TASKS_AZ";
+    private final String PARAM2 = "TASKS_ZA";
+    private final String PARAM3 = "TASKS_NewOld";
+    private final String PARAM4 = "TASKS_OldNew";
+    String TASKLIST_STATE_KEY = "TASKLIST_STATE_KEY"; // Save the taskList order requested on UI
     private TaskViewModel taskViewModel;
     String taskState;
 
@@ -117,18 +121,21 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         findViewById(R.id.fab_add_task).setOnClickListener(view -> showAddTaskDialog());
     }
 
+    /**
+     * The Task list order to call after an OnDestroy()
+     */
     private void stateOfTaskListOrder() {
         switch (taskState) {
-            case "TASKS_AZ":
+            case PARAM1:
                 getTasksAZ();
                 break;
-            case "TASKS_ZA":
+            case PARAM2:
                 getTasksZA();
                 break;
-            case "TASKS_NewOld":
+            case PARAM3:
                 getTasksNewOld();
                 break;
-            case "TASKS_OldNew":
+            case PARAM4:
                 getTasksOldNew();
                 break;
         }
@@ -184,10 +191,10 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
     /**
-     * Updates the list of tasks in the UI
+     * Updates the list of taskList in the UI
      */
-    private void updateTasks(List<Task> tasks) {
-        this.taskList = tasks;
+    private void updateTasks(List<Task> taskList) {
+        this.taskList = taskList;
         updateAdapter();
     }
 

@@ -26,9 +26,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
      * The list of tasks the adapter deals with
      */
     @NonNull
-    private List<Task> tasks;
+    private List<Task> taskList;
 
-    private List<Project> projects;
+    private List<Project> projectList;
 
     /**
      * The listener for when a task needs to be deleted
@@ -39,10 +39,10 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
     /**
      * Instantiates a new TasksAdapter.
      *
-     * @param tasks the list of tasks the adapter deals with to set
+     * @param taskList the list of tasks the adapter deals with to set
      */
-    TasksAdapter(@NonNull final List<Task> tasks, /*List<Project> projects,*/ @NonNull final DeleteTaskListener deleteTaskListener) {
-        this.tasks = tasks;
+    TasksAdapter(@NonNull final List<Task> taskList, /*List<Project> projects,*/ @NonNull final DeleteTaskListener deleteTaskListener) {
+        this.taskList = taskList;
 //        this.projects = projects;
         this.deleteTaskListener = deleteTaskListener;
     }
@@ -50,12 +50,12 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
     /**
      * Updates the list of tasks the adapter deals with.
      *
-     * @param tasks the list of tasks the adapter deals with to set
+     * @param taskList the list of tasks the adapter deals with to set
      */
-    void updateTasks(@NonNull final List<Task> tasks, @NonNull final List<Project> projects) {
+    void updateTasks(@NonNull final List<Task> taskList, @NonNull final List<Project> projects) {
         // TODO Utiliser le mTaskViewModel pour récupérer ces données, pas ces listes
-        this.tasks = tasks;
-        this.projects = projects;
+        this.taskList = taskList;
+        this.projectList = projects;
         notifyDataSetChanged();
 
     }
@@ -69,12 +69,12 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder taskViewHolder, int position) {
-        taskViewHolder.bind(tasks.get(position));
+        taskViewHolder.bind(taskList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return tasks.size();
+        return taskList.size();
     }
 
     /**
@@ -167,8 +167,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
         private Project getProject(long projectId) {
             Project project = null;
             // TODO Problème en cas de rotation à cause du projects == null ???
-            if (projects != null) {
-                for (Project p : projects)
+            if (projectList != null) {
+                for (Project p : projectList)
                     if (p.getId() == projectId) {
                         project = p;
                     }

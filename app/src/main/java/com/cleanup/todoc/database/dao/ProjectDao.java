@@ -12,7 +12,6 @@ import java.util.List;
 public interface ProjectDao {
 
     @Query("SELECT * FROM Project;")
-//    List<Project> getAllProjects();
     LiveData<List<Project>> getAllProjects();
 
 }

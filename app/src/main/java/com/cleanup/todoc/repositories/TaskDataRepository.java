@@ -30,11 +30,11 @@ public class TaskDataRepository {
     }
 
     public LiveData<List<Task>> getTasksNewOld() {
-        return this.taskDao.getTasksAlphabeticalNewToOld();
+        return this.taskDao.getTasksNewToOld();
     }
 
     public LiveData<List<Task>> getTasksOldNew() {
-        return this.taskDao.getTasksAlphabeticalOldToNew();
+        return this.taskDao.getTasksOldToNew();
     }
 
     // --- CREATE ---
