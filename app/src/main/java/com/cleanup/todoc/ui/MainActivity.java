@@ -38,11 +38,12 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
-    private final String PARAM1 = "TASKS_AZ";
-    private final String PARAM2 = "TASKS_ZA";
-    private final String PARAM3 = "TASKS_NewOld";
-    private final String PARAM4 = "TASKS_OldNew";
-    String TASKLIST_STATE_KEY = "TASKLIST_STATE_KEY"; // Save the taskList order requested on UI
+    final String TASKS_AZ = "TASKS_AZ";
+    final String TASKS_OldNew = "TASKS_OldNew";
+    final String TASKS_NewOld = "TASKS_NewOld";
+    final String TASKS_ZA = "TASKS_ZA";
+
+    final String TASKLIST_STATE_KEY = "TASKLIST_STATE_KEY"; // Save the taskList order requested on UI
     private TaskViewModel taskViewModel;
     String taskState;
 
@@ -84,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * The RecyclerView which displays the list of tasks
      */
     // Suppress warning is safe because variable is initialized in onCreate
-    @SuppressWarnings("NullableProblems")
     @NonNull
     private RecyclerView listTasks;
 
@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * The TextView displaying the empty state
      */
     // Suppress warning is safe because variable is initialized in onCreate
-    @SuppressWarnings("NullableProblems")
     @NonNull
     private TextView lblNoTasks;
 
@@ -126,16 +125,16 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      */
     private void stateOfTaskListOrder() {
         switch (taskState) {
-            case PARAM1:
+            case TASKS_AZ:
                 getTasksAZ();
                 break;
-            case PARAM2:
+            case TASKS_ZA:
                 getTasksZA();
                 break;
-            case PARAM3:
+            case TASKS_NewOld:
                 getTasksNewOld();
                 break;
-            case PARAM4:
+            case TASKS_OldNew:
                 getTasksOldNew();
                 break;
         }

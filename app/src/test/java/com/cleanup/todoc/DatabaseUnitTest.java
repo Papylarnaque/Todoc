@@ -31,11 +31,11 @@ import static org.junit.Assert.assertTrue;
 public class DatabaseUnitTest {
 
     // DATA SET FOR TEST
-    private static Project PROJECT_DEMO = new Project(4L, "Projet TEST", 0x00000000);
-    private static Task TASK_DEMO_1 = new Task(4L, "Tache de test hhh", 1888414154);
-    private static Task TASK_DEMO_2 = new Task(1L, "Tache de test zzz", 1889014154);  // newest
-    private static Task TASK_DEMO_3 = new Task(2L, "Tache de test aaa", 1884714154);  // oldest
-    private static Task TASK_DEMO_4 = new Task(0L, "Tache de test 1", 1888414154); // project not in db
+    private static final Project PROJECT_DEMO = new Project(4L, "Projet TEST", 0x00000000);
+    private static final Task TASK_DEMO_1 = new Task(4L, "Tache de test hhh", 1888414154);
+    private static final Task TASK_DEMO_2 = new Task(1L, "Tache de test zzz", 1889014154);  // newest
+    private static final Task TASK_DEMO_3 = new Task(2L, "Tache de test aaa", 1884714154);  // oldest
+    private static final Task TASK_DEMO_4 = new Task(0L, "Tache de test 1", 1888414154); // project not in db
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
     // FOR DATA

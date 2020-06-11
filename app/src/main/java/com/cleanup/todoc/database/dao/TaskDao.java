@@ -16,10 +16,10 @@ public interface TaskDao {
     LiveData<List<Task>> getTasks();
 
     @Insert
-    long insertTask(Task task);
+    void insertTask(Task task);
 
     @Query("DELETE FROM Task WHERE id = :taskId")
-    int deleteTask(long taskId);
+    void deleteTask(long taskId);
 
     @Query("SELECT * FROM Task ORDER BY name ASC")
     LiveData<List<Task>> getTasksAlphabeticalAZ();

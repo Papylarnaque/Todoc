@@ -9,6 +9,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        useLibrary 'android.test.base'
+        useLibrary 'android.test.mock'
     }
     buildTypes {
         release {
