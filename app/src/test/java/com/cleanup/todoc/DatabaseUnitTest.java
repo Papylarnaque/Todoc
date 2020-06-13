@@ -8,7 +8,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.core.app.ApplicationProvider;
 
 import com.cleanup.todoc.database.TodocDatabase;
 import com.cleanup.todoc.model.Project;
@@ -20,6 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE, sdk = Config.OLDEST_SDK)
 public class DatabaseUnitTest {
 
     // DATA SET FOR TEST
@@ -77,7 +79,7 @@ public class DatabaseUnitTest {
 
     @Before
     public void initDb() throws Exception {
-        this.db = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().getContext(),
+        this.db = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(),
                 TodocDatabase.class)
                 .allowMainThreadQueries()
                 .addCallback(prepopulateDatabase())
@@ -157,13 +159,7 @@ public class DatabaseUnitTest {
         this.db.taskDao().insertTask(TASK_DEMO_3); // aaa
 
         //TEST  that the added task is in the database
-        List<Task> taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasks());
-        assertEquals(3, taskList.size());
-        assertEquals(taskList.get(0).getName(), TASK_DEMO_1.getName());
-        assertEquals(taskList.get(1).getName(), TASK_DEMO_2.getName());
-        assertEquals(taskList.get(2).getName(), TASK_DEMO_3.getName());
-
-        taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasksAlphabeticalAZ());
+        List<Task> taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasksAlphabeticalAZ());
         assertEquals(3, taskList.size());
         assertEquals(taskList.get(0).getName(), TASK_DEMO_3.getName());
         assertEquals(taskList.get(1).getName(), TASK_DEMO_1.getName());
@@ -177,14 +173,8 @@ public class DatabaseUnitTest {
         this.db.taskDao().insertTask(TASK_DEMO_2); // zzz
         this.db.taskDao().insertTask(TASK_DEMO_3); // aaa
 
-        //TEST  that the added task is in the database
-        List<Task> taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasks());
-        assertEquals(3, taskList.size());
-        assertEquals(taskList.get(0).getName(), TASK_DEMO_1.getName());
-        assertEquals(taskList.get(1).getName(), TASK_DEMO_2.getName());
-        assertEquals(taskList.get(2).getName(), TASK_DEMO_3.getName());
-
-        taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasksAlphabeticalZA());
+        //TEST
+        List<Task> taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasksAlphabeticalZA());
         assertEquals(3, taskList.size());
         assertEquals(taskList.get(0).getName(), TASK_DEMO_2.getName());
         assertEquals(taskList.get(1).getName(), TASK_DEMO_1.getName());
@@ -198,14 +188,8 @@ public class DatabaseUnitTest {
         this.db.taskDao().insertTask(TASK_DEMO_2); // newest
         this.db.taskDao().insertTask(TASK_DEMO_3); // oldest
 
-        //TEST  that the added task is in the database
-        List<Task> taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasks());
-        assertEquals(3, taskList.size());
-        assertEquals(taskList.get(0).getName(), TASK_DEMO_1.getName());
-        assertEquals(taskList.get(1).getName(), TASK_DEMO_2.getName());
-        assertEquals(taskList.get(2).getName(), TASK_DEMO_3.getName());
-
-        taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasksNewToOld());
+        //TEST
+        List<Task> taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasksNewToOld());
         assertEquals(3, taskList.size());
         assertEquals(taskList.get(0).getName(), TASK_DEMO_2.getName());
         assertEquals(taskList.get(1).getName(), TASK_DEMO_1.getName());
@@ -220,13 +204,7 @@ public class DatabaseUnitTest {
         this.db.taskDao().insertTask(TASK_DEMO_3); // oldest
 
         //TEST  that the added task is in the database
-        List<Task> taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasks());
-        assertEquals(3, taskList.size());
-        assertEquals(taskList.get(0).getName(), TASK_DEMO_1.getName());
-        assertEquals(taskList.get(1).getName(), TASK_DEMO_2.getName());
-        assertEquals(taskList.get(2).getName(), TASK_DEMO_3.getName());
-
-        taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasksOldToNew());
+        List<Task> taskList = LiveDataTestUtil.getValue(this.db.taskDao().getTasksOldToNew());
         assertEquals(3, taskList.size());
         assertEquals(taskList.get(0).getName(), TASK_DEMO_3.getName());
         assertEquals(taskList.get(1).getName(), TASK_DEMO_1.getName());

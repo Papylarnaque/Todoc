@@ -9,13 +9,13 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
         useLibrary 'android.test.base'
         useLibrary 'android.test.mock'
     }
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -26,6 +26,11 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        unitTests.includeAndroidResources = true
+    }
+
 }
 
 dependencies {
@@ -83,5 +88,5 @@ dependencies {
     // classpath.
     androidTestImplementation 'androidx.test.espresso:espresso-idling-resource:3.2.0'
 
-        implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
 }

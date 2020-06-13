@@ -38,14 +38,7 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
-    final String TASKS_AZ = "TASKS_AZ";
-    final String TASKS_OldNew = "TASKS_OldNew";
-    final String TASKS_NewOld = "TASKS_NewOld";
-    final String TASKS_ZA = "TASKS_ZA";
-
-    final String TASKLIST_STATE_KEY = "TASKLIST_STATE_KEY"; // Save the taskList order requested on UI
     private TaskViewModel taskViewModel;
-    String taskState;
 
     /**
      * List of all projects available in the application
@@ -100,44 +93,18 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // recovering the instance state
-        if (savedInstanceState != null) {
-            taskState = savedInstanceState.getString(TASKLIST_STATE_KEY);
-        }
-
         setContentView(R.layout.activity_main);
 
         listTasks = findViewById(R.id.list_tasks);
         lblNoTasks = findViewById(R.id.lbl_no_task);
         this.configureViewModel();
         if (projectList == null) this.getProjectList();
-        if (taskState == null) this.getTaskList();
-        else stateOfTaskListOrder();
+        getTaskSorted();
 
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         listTasks.setAdapter(adapter);
 
         findViewById(R.id.fab_add_task).setOnClickListener(view -> showAddTaskDialog());
-    }
-
-    /**
-     * The Task list order to call after an OnDestroy()
-     */
-    private void stateOfTaskListOrder() {
-        switch (taskState) {
-            case TASKS_AZ:
-                getTasksAZ();
-                break;
-            case TASKS_ZA:
-                getTasksZA();
-                break;
-            case TASKS_NewOld:
-                getTasksNewOld();
-                break;
-            case TASKS_OldNew:
-                getTasksOldNew();
-                break;
-        }
     }
 
     ///////////// CONFIGURATION /////////////
@@ -160,34 +127,34 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         }
     }
 
-
     ///////////// TASK /////////////
 
     // Get all tasks
-    private void getTaskList() {
-        this.taskViewModel.getTasks().observe(this, this::updateTasks);
+    private void getTaskSorted() {
+        this.taskViewModel.getTaskSorted().observe(this, this::updateTasks);
     }
 
     // Sorting Querries
     private void getTasksAZ() {
-        this.taskViewModel.getTasksAZ().observe(this, this::updateTasks);
-        taskState = "TASKS_AZ";
+        this.taskViewModel.sortTaskList = TaskViewModel.SortTaskList.TASKS_AZ;
+        getTaskSorted();
     }
 
     private void getTasksZA() {
-        this.taskViewModel.getTasksZA().observe(this, this::updateTasks);
-        taskState = "TASKS_ZA";
+        this.taskViewModel.sortTaskList = TaskViewModel.SortTaskList.TASKS_ZA;
+        getTaskSorted();
     }
 
     private void getTasksNewOld() {
-        this.taskViewModel.getTasksNewOld().observe(this, this::updateTasks);
-        taskState = "TASKS_NewOld";
+        this.taskViewModel.sortTaskList = TaskViewModel.SortTaskList.TASKS_NewOld;
+        getTaskSorted();
     }
 
     private void getTasksOldNew() {
-        this.taskViewModel.getTasksOldNew().observe(this, this::updateTasks);
-        taskState = "TASKS_OldNew";
+        this.taskViewModel.sortTaskList = TaskViewModel.SortTaskList.TASKS_OldNew;
+        getTaskSorted();
     }
+
 
     /**
      * Updates the list of taskList in the UI
@@ -351,12 +318,12 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
 
-    // invoked when the activity may be temporarily destroyed, save the instance state here
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(TASKLIST_STATE_KEY, taskState);
-        super.onSaveInstanceState(outState);
-    }
+//    // invoked when the activity may be temporarily destroyed, save the instance state here
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        outState.putString(TASKLIST_STATE_KEY, taskState);
+//        super.onSaveInstanceState(outState);
+//    }
 
 
 }

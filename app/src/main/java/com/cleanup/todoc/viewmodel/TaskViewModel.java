@@ -18,57 +18,57 @@ public class TaskViewModel extends ViewModel {
     private final TaskDataRepository taskDataSource;
     private final Executor executor;
 
+    public SortTaskList sortTaskList = SortTaskList.DEFAULT;
+
+    // -------------
+    // FOR PROJECT
+    // -------------
+    public LiveData<List<Project>> getProjects() {
+        return projectDataSource.getAllProjects();
+    }
+
+
     public TaskViewModel(ProjectDataRepository projectDataSource, TaskDataRepository taskDataSource, Executor executor) {
         this.projectDataSource = projectDataSource;
         this.taskDataSource = taskDataSource;
         this.executor = executor;
     }
 
-    // -------------
-    // FOR PROJECT
-    // -------------
-
-    public LiveData<List<Project>> getProjects() { return projectDataSource.getAllProjects();  }
-
-//    public List<Project> getProjects() {
-//        List<Project> projects = null;
-//        executor.execute(projectDataSource::getAllProjects
-//        projects = projectDataSource.getAllProjects());
-//        return projects;
-//    }
+    public LiveData<List<Task>> getTaskSorted() {
+        switch (sortTaskList) {
+            case TASKS_AZ:
+                return taskDataSource.getTasksAZ();
+            case TASKS_ZA:
+                return taskDataSource.getTasksZA();
+            case TASKS_NewOld:
+                return taskDataSource.getTasksNewOld();
+            case TASKS_OldNew:
+                return taskDataSource.getTasksOldNew();
+            default:
+                return taskDataSource.getTasks();
+        }
+    }
 
     // TODO Implementer ViewModel.onCleared() pour éviter un leak en cas de fin de vue par l'utilisateur
 
     // -------------
     // FOR TASKS
     // -------------
-
-    public LiveData<List<Task>> getTasks() {
-        return taskDataSource.getTasks();
-    }
-
-    public LiveData<List<Task>> getTasksAZ() {
-        return taskDataSource.getTasksAZ();
-    }
-
-    public LiveData<List<Task>> getTasksZA() {
-        return taskDataSource.getTasksZA();
-    }
-
-    public LiveData<List<Task>> getTasksNewOld() {
-        return taskDataSource.getTasksNewOld();
-    }
-
-    public LiveData<List<Task>> getTasksOldNew() {
-        return taskDataSource.getTasksOldNew();
-    }
-
     public void addTask(Task task) {
         executor.execute(() -> taskDataSource.addTask(task));
     }
 
     public void deleteTask(long id) {
         executor.execute(() -> taskDataSource.deleteTask(id));
+    }
+
+    // Parameter for tasks list order
+    public enum SortTaskList {
+        DEFAULT,
+        TASKS_AZ,
+        TASKS_ZA,
+        TASKS_NewOld,
+        TASKS_OldNew
     }
 
 }

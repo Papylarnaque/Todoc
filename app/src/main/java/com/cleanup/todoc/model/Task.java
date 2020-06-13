@@ -5,6 +5,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 /**
@@ -13,10 +14,12 @@ import androidx.room.PrimaryKey;
  * @author Gaëtan HERFRAY
  */
 // We declare project as a table with FK = projectId and PK = id / @ Etienne DESCAMPS
+
 @Entity(foreignKeys = @ForeignKey(entity = Project.class,
         parentColumns = "id",
         childColumns = "projectId"),
-        tableName = "task")
+        tableName = "task",
+        indices = {@Index(value = {"projectId"})})
 public class Task {
     /**
      * The unique identifier of the task
