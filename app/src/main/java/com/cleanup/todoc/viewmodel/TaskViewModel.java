@@ -18,6 +18,15 @@ public class TaskViewModel extends ViewModel {
     private final TaskDataRepository taskDataSource;
     private final Executor executor;
 
+    // Parameter for tasks list order
+    public enum SortTaskList {
+        DEFAULT,
+        TASKS_AZ,
+        TASKS_ZA,
+        TASKS_NewOld,
+        TASKS_OldNew
+    }
+
     public SortTaskList sortTaskList = SortTaskList.DEFAULT;
 
     // -------------
@@ -58,15 +67,6 @@ public class TaskViewModel extends ViewModel {
 
     public void deleteTask(long id) {
         executor.execute(() -> taskDataSource.deleteTask(id));
-    }
-
-    // Parameter for tasks list order
-    public enum SortTaskList {
-        DEFAULT,
-        TASKS_AZ,
-        TASKS_ZA,
-        TASKS_NewOld,
-        TASKS_OldNew
     }
 
 }
