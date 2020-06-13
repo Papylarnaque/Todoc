@@ -49,8 +49,6 @@ public class TaskViewModel extends ViewModel {
         }
     }
 
-    // TODO Implementer ViewModel.onCleared() pour éviter un leak en cas de fin de vue par l'utilisateur
-
     // -------------
     // FOR TASKS
     // -------------

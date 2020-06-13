@@ -309,21 +309,10 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * Sets the data of the Spinner with projects to associate to a new task
      */
     private void populateDialogSpinner() {
-        // TODO Récupérer les projets directement ici a partir d'un observer
         final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, projectList.toArray(new Project[0]));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dialogSpinner != null) {
             dialogSpinner.setAdapter(adapter);
         }
     }
-
-
-//    // invoked when the activity may be temporarily destroyed, save the instance state here
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        outState.putString(TASKLIST_STATE_KEY, taskState);
-//        super.onSaveInstanceState(outState);
-//    }
-
-
 }
