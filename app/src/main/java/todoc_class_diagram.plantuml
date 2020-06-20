@@ -53,11 +53,6 @@ title __TODOC's Class Diagram__\n
 
     namespace ui {
       class com.cleanup.todoc.ui.MainActivity {
-          + dialog : AlertDialog
-          - dialogEditText : EditText
-          - dialogSpinner : Spinner
-          - lblNoTasks : TextView
-          - listTasks : RecyclerView
           - projectList : List<Project>
           - taskList : List<Task>
           + onCreate()

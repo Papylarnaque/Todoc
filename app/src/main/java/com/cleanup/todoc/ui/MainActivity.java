@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         lblNoTasks = findViewById(R.id.lbl_no_task);
         this.configureViewModel();
         if (projectList == null) this.getProjectList();
-        getTaskSorted();
+        this.taskViewModel.getTaskSorted().observe(this, this::updateTasks);
 
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         listTasks.setAdapter(adapter);
@@ -130,29 +130,27 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     ///////////// TASK /////////////
 
     // Get all tasks
-    private void getTaskSorted() {
+    private void getTaskSorted(TaskViewModel.SortTaskList task_order) {
+        this.taskViewModel.getTaskSorted().removeObservers(this);
+        this.taskViewModel.sortTaskList = task_order;
         this.taskViewModel.getTaskSorted().observe(this, this::updateTasks);
     }
 
     // Sorting Querries
     private void getTasksAZ() {
-        this.taskViewModel.sortTaskList = TaskViewModel.SortTaskList.TASKS_AZ;
-        getTaskSorted();
+        getTaskSorted(TaskViewModel.SortTaskList.TASKS_AZ);
     }
 
     private void getTasksZA() {
-        this.taskViewModel.sortTaskList = TaskViewModel.SortTaskList.TASKS_ZA;
-        getTaskSorted();
+        getTaskSorted(TaskViewModel.SortTaskList.TASKS_ZA);
     }
 
     private void getTasksNewOld() {
-        this.taskViewModel.sortTaskList = TaskViewModel.SortTaskList.TASKS_NewOld;
-        getTaskSorted();
+        getTaskSorted(TaskViewModel.SortTaskList.TASKS_NewOld);
     }
 
     private void getTasksOldNew() {
-        this.taskViewModel.sortTaskList = TaskViewModel.SortTaskList.TASKS_OldNew;
-        getTaskSorted();
+        getTaskSorted(TaskViewModel.SortTaskList.TASKS_OldNew);
     }
 
 

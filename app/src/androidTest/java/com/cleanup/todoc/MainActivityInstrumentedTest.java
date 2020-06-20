@@ -224,8 +224,6 @@ public class MainActivityInstrumentedTest {
                 .perform(click());
 
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Thread.sleep(2000); // wait that the screen comes back to portrait before launching next tests
-
 
     }
 
